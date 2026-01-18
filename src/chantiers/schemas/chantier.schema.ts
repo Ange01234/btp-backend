@@ -54,6 +54,9 @@ export class Chantier extends Document {
   @ApiProperty({ description: 'The user ID associated with this chantier' })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: string;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const ChantierSchema = SchemaFactory.createForClass(Chantier);

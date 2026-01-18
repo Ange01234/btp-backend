@@ -51,6 +51,9 @@ export class Devis extends Document {
   @ApiProperty({ description: 'The user ID associated with this devis' })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: string;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const DevisSchema = SchemaFactory.createForClass(Devis);

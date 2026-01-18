@@ -30,6 +30,9 @@ export class Payment extends Document {
   @ApiProperty({ description: 'The user ID associated with this payment' })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: string;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

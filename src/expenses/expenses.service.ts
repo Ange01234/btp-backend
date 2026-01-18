@@ -10,12 +10,15 @@ export class ExpensesService {
   ) {}
 
   async findAll(userId: string) {
-    return this.expenseModel.find({ userId }).populate('chantierId').exec();
+    return this.expenseModel
+      .find({ userId, isDeleted: { $ne: true } })
+      .populate('chantierId')
+      .exec();
   }
 
   async findOne(id: string, userId: string) {
     const expense = await this.expenseModel
-      .findOne({ _id: id, userId })
+      .findOne({ _id: id, userId, isDeleted: { $ne: true } })
       .populate('chantierId')
       .exec();
 
@@ -43,6 +46,8 @@ export class ExpensesService {
   async remove(id: string, userId: string) {
     await this.findOne(id, userId);
 
-    return this.expenseModel.findByIdAndDelete(id).exec();
+    return this.expenseModel
+      .findByIdAndUpdate(id, { isDeleted: true }, { new: true })
+      .exec();
   }
 }

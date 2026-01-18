@@ -8,12 +8,15 @@ export class DevisService {
   constructor(@InjectModel(Devis.name) private devisModel: Model<Devis>) {}
 
   async findAll(userId: string) {
-    return this.devisModel.find({ userId }).populate('chantierId').exec();
+    return this.devisModel
+      .find({ userId, isDeleted: { $ne: true } })
+      .populate('chantierId')
+      .exec();
   }
 
   async findOne(id: string, userId: string) {
     const devis = await this.devisModel
-      .findOne({ _id: id, userId })
+      .findOne({ _id: id, userId, isDeleted: { $ne: true } })
       .populate('chantierId')
       .exec();
 
@@ -41,6 +44,8 @@ export class DevisService {
   async remove(id: string, userId: string) {
     await this.findOne(id, userId);
 
-    return this.devisModel.findByIdAndDelete(id).exec();
+    return this.devisModel
+      .findByIdAndUpdate(id, { isDeleted: true }, { new: true })
+      .exec();
   }
 }

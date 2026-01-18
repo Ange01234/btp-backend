@@ -10,12 +10,15 @@ export class PaymentsService {
   ) {}
 
   async findAll(userId: string) {
-    return this.paymentModel.find({ userId }).populate('chantierId').exec();
+    return this.paymentModel
+      .find({ userId, isDeleted: { $ne: true } })
+      .populate('chantierId')
+      .exec();
   }
 
   async findOne(id: string, userId: string) {
     const payment = await this.paymentModel
-      .findOne({ _id: id, userId })
+      .findOne({ _id: id, userId, isDeleted: { $ne: true } })
       .populate('chantierId')
       .exec();
 
@@ -43,6 +46,8 @@ export class PaymentsService {
   async remove(id: string, userId: string) {
     await this.findOne(id, userId);
 
-    return this.paymentModel.findByIdAndDelete(id).exec();
+    return this.paymentModel
+      .findByIdAndUpdate(id, { isDeleted: true }, { new: true })
+      .exec();
   }
 }

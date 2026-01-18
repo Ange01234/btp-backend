@@ -10,12 +10,14 @@ export class ChantiersService {
   ) {}
 
   async findAll(userId: string) {
-    return this.chantierModel.find({ userId }).exec();
+    return this.chantierModel
+      .find({ userId, isDeleted: { $ne: true } })
+      .exec();
   }
 
   async findOne(id: string, userId: string) {
     const chantier = await this.chantierModel
-      .findOne({ _id: id, userId })
+      .findOne({ _id: id, userId, isDeleted: { $ne: true } })
       .exec();
 
     if (!chantier) {
@@ -42,6 +44,8 @@ export class ChantiersService {
   async remove(id: string, userId: string) {
     await this.findOne(id, userId); // Check existence and ownership
 
-    return this.chantierModel.findByIdAndDelete(id).exec();
+    return this.chantierModel
+      .findByIdAndUpdate(id, { isDeleted: true }, { new: true })
+      .exec();
   }
 }
