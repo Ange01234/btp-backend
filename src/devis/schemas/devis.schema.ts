@@ -29,6 +29,10 @@ export class Devis extends Document {
   })
   chantierId: string;
 
+  @ApiProperty({ example: 'Devis Travaux 2025', description: 'Name of the devis', required: false })
+  @Prop({ required: false })
+  name: string;
+
   @ApiProperty({ example: '2025-01-15', description: 'Date of the devis' })
   @Prop({ required: true })
   date: Date;

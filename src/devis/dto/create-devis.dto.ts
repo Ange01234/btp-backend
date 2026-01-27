@@ -35,6 +35,15 @@ export class CreateDevisDto {
   @IsString()
   chantierId: string;
 
+  @ApiProperty({
+    example: 'Devis Travaux 2025',
+    description: 'Name of the devis',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  name?: string;
+
   @ApiProperty({ example: '2025-01-10', description: 'Date of the devis' })
   @IsDateString()
   date: string;
