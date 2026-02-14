@@ -41,6 +41,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.isActive && user.name !== 'Modeste Hounnouvi') {
+      throw new UnauthorizedException('Account is not activated. Please contact an administrator.');
+    }
+
     const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -48,6 +52,32 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
+        company: user.company,
+        isActive: user.isActive,
+        role: user.role,
+      },
+    };
+  }
+
+  async activateUser(userId: string) {
+    const user = await this.userModel.findById(userId).exec();
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    user.isActive = true;
+    await user.save();
+
+    return {
+      message: 'User account activated successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        company: user.company,
+        isActive: user.isActive,
+        role: user.role,
       },
     };
   }

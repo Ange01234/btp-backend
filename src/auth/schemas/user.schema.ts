@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document } from 'mongoose';
+import { Role } from '../enums/role.enum';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -26,6 +27,31 @@ export class User extends Document {
   })
   @Prop()
   name?: string;
+
+  @ApiProperty({
+    example: 'Acme Corporation',
+    description: 'The company of the user',
+    required: false,
+  })
+  @Prop()
+  company?: string;
+
+  @ApiProperty({
+    example: false,
+    description: 'Whether the user account is active',
+    default: false,
+  })
+  @Prop({ default: false })
+  isActive: boolean;
+
+  @ApiProperty({
+    example: Role.USER,
+    description: 'The role of the user',
+    enum: Role,
+    default: Role.USER,
+  })
+  @Prop({ type: String, enum: Role, default: Role.USER })
+  role: Role;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

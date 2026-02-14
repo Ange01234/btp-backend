@@ -1,8 +1,13 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Controller, Post, Body, Patch, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ActivateDto } from './dto/activate.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from './enums/role.enum';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -25,5 +30,18 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Patch('activate')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Activate a user account (Admin only)' })
+  @ApiBody({ type: ActivateDto })
+  @ApiResponse({ status: 200, description: 'User account activated successfully' })
+  @ApiResponse({ status: 401, description: 'User not found or unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
+  activateUser(@Body() activateDto: ActivateDto) {
+    return this.authService.activateUser(activateDto.userId);
   }
 }

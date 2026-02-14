@@ -17,6 +17,9 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: { type: String },
+  company: { type: String },
+  isActive: { type: Boolean, default: false },
+  role: { type: String, enum: ['user', 'admin'], default: 'admin' },
 }, { timestamps: true });
 
 const User = mongoose.model('User', UserSchema);
@@ -41,6 +44,8 @@ async function seedAdmin() {
         email: adminEmail,
         password: hashedPassword,
         name: adminName,
+        role: 'admin',
+        isActive: true,
       });
 
       await adminUser.save();
