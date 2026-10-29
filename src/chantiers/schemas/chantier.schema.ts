@@ -51,9 +51,33 @@ export class Chantier extends Document {
   @Prop({ required: true, default: 'En cours' })
   status: string; // "En cours" | "Terminé" | "Suspendu"
 
-  @ApiProperty({ description: 'The user ID associated with this chantier' })
+  @ApiProperty({ description: 'The user ID associated with this chantier (Owner)' })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   userId: string;
+
+  @ApiProperty({
+    description: 'List of spectators with read-only access',
+    type: 'array',
+  })
+  @Prop({
+    type: [
+      {
+        userId: { type: MongooseSchema.Types.ObjectId, ref: 'User', required: true },
+        email: { type: String, required: true },
+        name: { type: String, required: false },
+        company: { type: String, required: false },
+        addedAt: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  })
+  spectators: Array<{
+    userId: string;
+    email: string;
+    name?: string;
+    company?: string;
+    addedAt?: Date;
+  }>;
 
   @Prop({ default: false })
   isDeleted: boolean;

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsNumber,
@@ -54,4 +55,12 @@ export class CreateChantierDto {
   })
   @IsEnum(['En cours', 'Terminé', 'Suspendu'])
   status: string;
+
+  @ApiPropertyOptional({
+    description: 'Array of user IDs to add as spectators (read-only)',
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  spectatorIds?: string[];
 }

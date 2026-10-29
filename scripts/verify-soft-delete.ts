@@ -1,4 +1,3 @@
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ExpensesService } from '../src/expenses/expenses.service';
@@ -14,7 +13,7 @@ async function bootstrap() {
 
   // 1. Create a dummy Chantier
   console.log('Creating dummy chantier...');
-  const chantier = await chantiersService.create({
+  const chantier: any = await chantiersService.create({
     name: 'Test Soft Delete Chantier',
     client: 'Test Client',
     location: 'Test Location',
@@ -22,19 +21,19 @@ async function bootstrap() {
     budget: 1000,
     status: 'En cours',
   }, userId);
-  console.log('Chantier created:', chantier._id);
+  console.log('Chantier created:', chantier?._id);
 
   // 2. Create a dummy Expense
   console.log('Creating dummy expense...');
-  const expense = await expensesService.create({
-    chantierId: chantier._id,
+  const expense: any = await expensesService.create({
+    chantierId: chantier._id.toString(),
     type: 'matériaux',
     description: 'Test Expense',
     amount: 100,
     provider: 'Test Provider',
     date: new Date(),
   }, userId);
-  console.log('Expense created:', expense._id);
+  console.log('Expense created:', expense?._id);
 
   // 3. Verify Expense exists
   let found = await expensesService.findOne(expense._id.toString(), userId);
@@ -52,11 +51,7 @@ async function bootstrap() {
     console.log('SUCCESS: Expense not found via service after delete');
   }
 
-  // 6. Verify Expense "isDeleted" in DB (direct access via model if possible, or assume success if step 5 worked and no error thrown)
-  // Since we don't have direct model access easily here without more setup, we rely on the fact that 'remove' implementation was changed to update 'isDeleted'.
-  
-  // Clean up (Hard delete manually if needed, but for now we leave it)
-    console.log('Verification complete.');
+  console.log('Verification complete.');
   await app.close();
 }
 

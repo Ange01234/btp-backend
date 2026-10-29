@@ -81,4 +81,11 @@ export class AuthService {
       },
     };
   }
+
+  async findAllUsers(currentUserId: string) {
+    return this.userModel
+      .find({ isActive: true, _id: { $ne: currentUserId } })
+      .select('id email name company role')
+      .exec();
+  }
 }

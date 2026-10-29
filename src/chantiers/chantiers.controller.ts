@@ -29,11 +29,13 @@ export class ChantiersController {
   constructor(private chantiersService: ChantiersService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all chantiers accessible by user (owned or shared as spectator)' })
   findAll(@GetUser() user: any) {
     return this.chantiersService.findAll(user.userId);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a chantier by id' })
   findOne(@Param('id') id: string, @GetUser() user: any) {
     return this.chantiersService.findOne(id, user.userId);
   }
@@ -50,7 +52,7 @@ export class ChantiersController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update an existing chantier' })
+  @ApiOperation({ summary: 'Update an existing chantier (Owner only)' })
   @ApiBody({ type: UpdateChantierDto })
   @ApiResponse({
     status: 200,
@@ -65,7 +67,28 @@ export class ChantiersController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a chantier (Owner only)' })
   remove(@Param('id') id: string, @GetUser() user: any) {
     return this.chantiersService.remove(id, user.userId);
+  }
+
+  @Post(':id/spectators')
+  @ApiOperation({ summary: 'Add a spectator to a chantier (Owner only)' })
+  addSpectator(
+    @Param('id') id: string,
+    @Body('userId') spectatorUserId: string,
+    @GetUser() user: any,
+  ) {
+    return this.chantiersService.addSpectator(id, spectatorUserId, user.userId);
+  }
+
+  @Delete(':id/spectators/:spectatorId')
+  @ApiOperation({ summary: 'Remove a spectator from a chantier (Owner only)' })
+  removeSpectator(
+    @Param('id') id: string,
+    @Param('spectatorId') spectatorId: string,
+    @GetUser() user: any,
+  ) {
+    return this.chantiersService.removeSpectator(id, spectatorId, user.userId);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Patch, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -8,6 +8,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { Role } from './enums/role.enum';
+import { GetUser } from '../common/decorators/get-user.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -43,5 +44,14 @@ export class AuthController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   activateUser(@Body() activateDto: ActivateDto) {
     return this.authService.activateUser(activateDto.userId);
+  }
+
+  @Get('users')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all active registered users for collaboration' })
+  @ApiResponse({ status: 200, description: 'List of active registered users' })
+  findAllUsers(@GetUser() user: any) {
+    return this.authService.findAllUsers(user.userId);
   }
 }
